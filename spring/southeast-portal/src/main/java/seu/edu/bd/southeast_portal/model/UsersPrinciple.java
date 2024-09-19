@@ -1,13 +1,20 @@
 package seu.edu.bd.southeast_portal.model;
 
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import seu.edu.bd.southeast_portal.security.Role;
 
 import java.util.Collection;
 import java.util.List;
 
+
 public class UsersPrinciple implements UserDetails {
     Users user;
+    Role userRole = Role.USER ;
+    Role adminRole = Role.ADMIN ;
+    Role stuffRole = Role.STUFF ;
 
     public UsersPrinciple(Users user) {
         this.user= user;
@@ -15,7 +22,13 @@ public class UsersPrinciple implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        if(user.getRole().equals(adminRole.name())){
+            return adminRole.getAuthority();
+        }else if(user.getRole().equals(stuffRole.name())){
+            return stuffRole.getAuthority();
+        }else {
+            return userRole.getAuthority();
+        }
     }
 
     @Override
@@ -30,21 +43,21 @@ public class UsersPrinciple implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return user.getAccountNonExpired();
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return user.getAccountNonLocked();
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return user.getCredentialsNonExpired();
     }
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return user.getEnabled();
     }
 }
