@@ -1,8 +1,7 @@
-package seu.edu.bd.southeast_portal.model;
+package seu.edu.bd.southeast_portal.model.users;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.stereotype.Component;
 
 @Data
 @AllArgsConstructor

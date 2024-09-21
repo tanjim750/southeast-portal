@@ -1,7 +1,6 @@
 package seu.edu.bd.southeast_portal.service;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -13,10 +12,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import seu.edu.bd.southeast_portal.model.Users;
-import seu.edu.bd.southeast_portal.model.UsersRequest;
+import seu.edu.bd.southeast_portal.model.users.Users;
+import seu.edu.bd.southeast_portal.model.users.UsersRequest;
 import seu.edu.bd.southeast_portal.repository.UsersRepo;
-import seu.edu.bd.southeast_portal.security.Role;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -132,7 +130,7 @@ public class AuthService {
 
     }
 
-    public Map<String,String> verifyLoginUser(Users user) {
+    public ResponseEntity<Map<String,String>> verifyLoginUser(UsersRequest user) {
         Map<String,String> response = new HashMap<>();
 
         try{
@@ -143,17 +141,19 @@ public class AuthService {
                 response.put("username", user.getUsername());
                 response.put("role",authentication.getAuthorities().toString());
                 response.put("token",jwtService.generateJwtToken(user.getUsername(),false));
-                return response;
+                return new ResponseEntity<>(response,HttpStatus.OK);
             }
         }catch (BadCredentialsException e) {
             response.put("status", "failed");
             response.put("error","Invalid username or password");
-            return response;
+            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
         }
 
         response.put("status", "failed");
         response.put("error","Something went wrong");
-        return response;
+        return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+
+
     }
 
     public ResponseEntity<?> updateUserRole(UsersRequest user) {

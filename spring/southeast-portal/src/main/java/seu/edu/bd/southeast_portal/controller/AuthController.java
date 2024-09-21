@@ -1,17 +1,10 @@
 package seu.edu.bd.southeast_portal.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import seu.edu.bd.southeast_portal.model.Users;
-import seu.edu.bd.southeast_portal.model.UsersRequest;
+import seu.edu.bd.southeast_portal.model.users.UsersRequest;
 import seu.edu.bd.southeast_portal.service.AuthService;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -25,14 +18,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Users user) {
-        Map<String,String> response = service.verifyLoginUser(user);
-        if (response.get("status").equals("success")) {
-            return new ResponseEntity<Map<String,String>>(response, HttpStatus.OK);
-        } else if (response.get("status").equals("internal-error")) {
-            return new ResponseEntity<Map<String,String>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<Map<String,String>>(response, HttpStatus.NOT_FOUND);
+    public ResponseEntity<?> login(@RequestBody UsersRequest user) {
+        return service.verifyLoginUser(user);
     }
 
     @PutMapping("/update-role")

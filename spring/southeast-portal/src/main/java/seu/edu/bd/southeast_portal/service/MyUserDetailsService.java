@@ -5,8 +5,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import seu.edu.bd.southeast_portal.model.Users;
-import seu.edu.bd.southeast_portal.model.UsersPrinciple;
+import seu.edu.bd.southeast_portal.model.users.Users;
+import seu.edu.bd.southeast_portal.model.users.UsersPrinciple;
 import seu.edu.bd.southeast_portal.repository.UsersRepo;
 
 @Service

@@ -1,7 +1,6 @@
 package seu.edu.bd.southeast_portal.config;
 
 import jakarta.annotation.PostConstruct;
-import org.apache.coyote.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -10,19 +9,17 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import seu.edu.bd.southeast_portal.filters.JwtFilter;
-import seu.edu.bd.southeast_portal.security.Permission;
-import seu.edu.bd.southeast_portal.security.Role;
+import seu.edu.bd.southeast_portal.authorization.Permission;
+import seu.edu.bd.southeast_portal.authorization.Role;
 
 @Configuration
 @EnableWebSecurity
@@ -46,9 +43,8 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests((requests) -> requests
 
-                    .requestMatchers(HttpMethod.GET,"/api/**").hasAnyRole(
-                            Role.USER.name(),Role.ADMIN.name(),Role.STUFF.name()
-                    )
+                    .requestMatchers(HttpMethod.GET)
+                    .permitAll()
                     .requestMatchers(HttpMethod.POST,"/api/**").hasRole(
                             Role.ADMIN.name()
                     )
@@ -57,9 +53,6 @@ public class SecurityConfig {
                     )
                     .requestMatchers(HttpMethod.DELETE,"/api/**").hasRole(
                             Role.ADMIN.name()
-                    )
-                    .requestMatchers(HttpMethod.GET,"/api/**").hasAnyAuthority(
-                            Permission.USER_READ.name(),Permission.STUFF_READ.name(),Permission.ADMIN_READ.name()
                     )
                     .requestMatchers(HttpMethod.POST,"/api/**").hasAuthority(
                             Permission.ADMIN_CREATE.name()

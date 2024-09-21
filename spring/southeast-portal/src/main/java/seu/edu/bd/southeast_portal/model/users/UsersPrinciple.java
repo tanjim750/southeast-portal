@@ -1,13 +1,10 @@
-package seu.edu.bd.southeast_portal.model;
+package seu.edu.bd.southeast_portal.model.users;
 
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import seu.edu.bd.southeast_portal.security.Role;
+import seu.edu.bd.southeast_portal.authorization.Role;
 
 import java.util.Collection;
-import java.util.List;
 
 
 public class UsersPrinciple implements UserDetails {

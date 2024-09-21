@@ -1,8 +1,7 @@
-package seu.edu.bd.southeast_portal.security;
+package seu.edu.bd.southeast_portal.authorization;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.List;

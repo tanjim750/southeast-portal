@@ -1,11 +1,10 @@
-package seu.edu.bd.southeast_portal.model;
+package seu.edu.bd.southeast_portal.model.users;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import seu.edu.bd.southeast_portal.security.Role;
+import seu.edu.bd.southeast_portal.authorization.Role;
 
 @Data
 @AllArgsConstructor
