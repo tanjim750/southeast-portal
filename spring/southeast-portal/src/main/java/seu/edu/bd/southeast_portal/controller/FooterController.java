@@ -12,12 +12,12 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/footer")
+@RequestMapping("/api/v1/page/footer")
 public class FooterController {
     @Autowired
     private FooterService service;
 
-    @GetMapping
+    @GetMapping("/get")
     public ResponseEntity<?> getFooter(HttpServletRequest request) {
         String id = request.getParameter("id");
 
@@ -28,29 +28,24 @@ public class FooterController {
         }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getFooterByIdPath(@PathVariable Long id) {
+    @GetMapping("/get/{id}")
+    public ResponseEntity<?> getById(@PathVariable Long id) {
         return service.getFooterById(id);
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public ResponseEntity<?> postFooter(@RequestBody Footer footer) {
         return service.saveFooter(footer);
 
     }
 
-    @PutMapping
-    public String putFooter() {
-        return "put footer";
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> update(@PathVariable String id, @RequestBody Footer footer) {
+        return service.updateFooterById(id, footer);
     }
 
-    @DeleteMapping
-    public ResponseEntity<?> deleteFooter(HttpServletRequest request) {
-        return service.deleteFooterById(request.getParameter("id"));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteFooterByPath(@PathVariable String id) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable String id) {
         return service.deleteFooterById(id);
     }
 }

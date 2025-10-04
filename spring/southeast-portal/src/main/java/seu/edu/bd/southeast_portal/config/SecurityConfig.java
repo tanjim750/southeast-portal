@@ -9,6 +9,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,9 +18,15 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import seu.edu.bd.southeast_portal.exceptionHandler.CustomAuthenticationEntryPoint;
 import seu.edu.bd.southeast_portal.filters.JwtFilter;
 import seu.edu.bd.southeast_portal.authorization.Permission;
 import seu.edu.bd.southeast_portal.authorization.Role;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -28,6 +35,8 @@ public class SecurityConfig {
     private UserDetailsService userDetailsService;
     @Autowired
     private JwtFilter jwtFilter;
+    @Autowired
+    private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Value("${custom.bcrypt.strength}")
     private int bCryptStrength;
@@ -40,10 +49,16 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        Object CustomAuthenticationEntryPoint;
+
         http
+            .cors(Customizer.withDefaults())
+            .csrf(c -> c.disable())
             .authorizeHttpRequests((requests) -> requests
 
                     .requestMatchers(HttpMethod.GET)
+                    .permitAll()
+                    .requestMatchers("/auth/login","/auth/create")
                     .permitAll()
                     .requestMatchers(HttpMethod.POST,"/api/**").hasRole(
                             Role.ADMIN.name()
@@ -63,8 +78,6 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.DELETE,"/api/**").hasAuthority(
                             Permission.ADMIN_DELETE.name()
                     )
-                    .requestMatchers("/auth/login","/auth/create").permitAll()
-
                     .requestMatchers(HttpMethod.PUT,"/auth/update-role").hasRole(
                             Role.ADMIN.name()
                     )
@@ -74,11 +87,14 @@ public class SecurityConfig {
                     .anyRequest().authenticated()
 
             )
-            .csrf(c -> c.disable())
+
             .sessionManagement(session ->
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authenticationProvider(authenticationProvider())
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+            .exceptionHandling(exceptions ->
+                        exceptions.authenticationEntryPoint(customAuthenticationEntryPoint) // Set the custom entry point
+                );
 
         return http.build();
     }
@@ -96,4 +112,16 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOriginPatterns(List.of("*")); // Set allowed origin
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE")); // Allow specific HTTP methods
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setAllowCredentials(true); // Enable credentials (cookies, authorization headers)
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 }

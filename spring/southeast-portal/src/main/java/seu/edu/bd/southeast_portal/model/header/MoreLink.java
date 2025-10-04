@@ -1,4 +1,4 @@
-package seu.edu.bd.southeast_portal.model.footer;
+package seu.edu.bd.southeast_portal.model.header;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -6,14 +6,16 @@ import lombok.Data;
 
 @Data
 @Entity
-public class QuickButtons {
+public class MoreLink {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(nullable = false)
-    private String buttonText;
-    private String buttonColor;
+    @NotEmpty
+    private String name;
+
     @Column(nullable = false)
-    private String linkUrl;
+    @NotEmpty
+    private String url;
 }
